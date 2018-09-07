@@ -12,7 +12,7 @@ npm install raintech-auth-client
 
 ## How to use
 
-** Node JS
+**Node JS**
 
 const client = require('raintech-auth-client');
 const cypherCert = //Your certificate
