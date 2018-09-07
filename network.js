@@ -1,10 +1,9 @@
-const fs = require('fs');
 const Url = require('url');
 const http = require('http');
 const https = require('https');
 const util = require('util');
 const http2 = require('http2');
-const writeFile = util.promisify(fs.writeFile);
+
 
 function request({ protocol, params, postData }) {
     return new Promise((resolve, reject) => {

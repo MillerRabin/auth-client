@@ -16,7 +16,7 @@ npm install raintech-auth-client
 
 ```javascript
 const client = require('raintech-auth-client');
-const cypherCert = //Your certificate
-const certificate = await client.check(cypherCert);
+const certificate = //Your certificate
+const session = await client.check(cypherCert);
 console.log(certificate);
 ```
