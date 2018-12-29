@@ -13,6 +13,20 @@ npm install raintech-auth-client
 ## How to use
 
 **Node JS**
+Login by password to obtain certificate
+
+```javascript
+const client = require('raintech-auth-client');
+const response = client.loginByPassword({
+    login: 'Your login',
+    password: 'Your password',
+    referer: 'your resource'
+})
+const certificate = response.certificate;
+console.log(certificate);
+```
+
+Check certificate
 
 ```javascript
 const client = require('raintech-auth-client');

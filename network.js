@@ -3,7 +3,6 @@ const http = require('http');
 const https = require('https');
 const http2 = require('http2');
 
-
 function request({ protocol, params, postData }) {
     return new Promise((resolve, reject) => {
         const data = [];
@@ -102,6 +101,18 @@ exports.getJSON = async (url) => {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         }
+    });
+    return JSON.parse(results);
+};
+
+exports.postJSON = async (url, data) => {
+    const results = await exports.request({
+        url,
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        data
     });
     return JSON.parse(results);
 };

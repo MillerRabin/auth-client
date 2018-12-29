@@ -15,3 +15,10 @@ exports.check = async function (data) {
     const rsa = await getRsa();
     return JSON.parse(rsa.decryptPublic(data, 'utf8'));
 };
+
+exports.loginByPassword = async function (data) {
+    return await network.postJSON('https://auth.raintech.su:8093/api/users/login/bypassword', {
+        method: 'POST',
+        data: data
+    });
+};
