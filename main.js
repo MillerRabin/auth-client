@@ -17,8 +17,5 @@ exports.check = async function (data) {
 };
 
 exports.loginByPassword = async function (data) {
-    return await network.postJSON('https://auth.raintech.su:8093/api/users/login/bypassword', {
-        method: 'POST',
-        data: data
-    });
+    return await network.postJSON('https://auth.raintech.su:8093/api/users/login/bypassword', data);
 };

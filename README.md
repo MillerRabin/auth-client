@@ -18,9 +18,9 @@ Login by password to obtain certificate
 ```javascript
 const client = require('raintech-auth-client');
 const response = client.loginByPassword({
-    login: 'Your login',
+    loginOrEmail: 'Your login',
     password: 'Your password',
-    referer: 'your resource'
+    referer: 'link to your resource'
 })
 const certificate = response.certificate;
 console.log(certificate);

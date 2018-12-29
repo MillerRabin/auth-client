@@ -108,11 +108,12 @@ exports.getJSON = async (url) => {
 exports.postJSON = async (url, data) => {
     const results = await exports.request({
         url,
+        method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         },
-        data
+        postData: JSON.stringify(data)
     });
     return JSON.parse(results);
 };
