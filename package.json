@@ -8,11 +8,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://millerrabin@bitbucket.org/raintechteam/raintech-auth.git"
+    "url": "git+https://github.com/MillerRabin/auth-client"
   },
   "author": "MillerRabin",
   "license": "ISC",
-  "homepage": "https://bitbucket.org/raintechteam/raintech-auth#readme",
+  "homepage": "https://github.com/MillerRabin/auth-client",
   "dependencies": {
     "node-rsa": "^1.0.1"
   }
