@@ -1,7 +1,28 @@
+
+exports.data = {
+    iAuth: null,
+    configurations: {}
+};
+
+exports.requestingConfigurations = (intentionStorage, data = {}) => {
+    exports.data.iAuth = intentionStorage.createIntention({
+        title: 'Need authenticate device',
+        input: 'AuthConfiguration',
+        output: 'AuthData',
+        onData: (status, intention, value) => {
+            if (status == 'accepting')
+                return { data };
+            if (status == 'authConfiguration')
+                exports.data.configurations[intention.origin] = value;
+        }
+    });
+};
+
 exports.load = function (intentionStorage) {
-    console.log('loaded raintech auth client');
+    requestingConfigurations(intentionStorage)
 };
 
 exports.unload = function (intentionStorage) {
+    intentionStorage.deleteIntention(exports.data.iAuth);
     console.log('unloaded raintech auth client');
 };
