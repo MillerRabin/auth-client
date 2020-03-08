@@ -30,10 +30,11 @@ describe('Get Configuration', function() {
 
         it('Check configuration', function () {
             const conf = iMain.data.configurations['ws://localhost:10011'];
-            assert.notStrictEqual(conf, null);
-            assert.notStrictEqual(conf.public, null);
-            assert.notStrictEqual(conf.private, null);
-            assert.notStrictEqual(conf.certificate, null);
+            assert.notEqual(conf, null);
+            assert.notEqual(conf.public, null);
+            assert.notEqual(conf.private, null);
+            assert.notEqual(conf.certificate, null);
+            assert.notEqual(conf.id, null);
             assert.deepEqual(conf.data, { message: 'hello'});
         });
     });
