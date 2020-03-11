@@ -9,6 +9,7 @@ exports.requestingConfigurations = (intentionStorage, data = {}) => {
         title: 'Need authenticate device',
         input: 'AuthConfiguration',
         output: 'AuthData',
+        enableBroadcast: false,
         onData: (status, intention, value) => {
             if (status == 'accepting')
                 return { data };

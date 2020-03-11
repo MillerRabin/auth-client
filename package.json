@@ -15,8 +15,8 @@
   "license": "ISC",
   "homepage": "https://github.com/MillerRabin/auth-client",
   "dependencies": {
-    "intention-storage": "^0.1.12",
-    "node-rsa": "^1.0.1"
+    "intention-storage": "^0.1.13",
+    "node-rsa": "^1.0.7"
   },
   "devDependencies": {
     "mocha": "^7.1.0"
