@@ -10,12 +10,11 @@ exports.data = {
 exports.loadKeys = async (keyPath) => {
     try {
         const fname = (keyPath == null) ? path.join(__dirname, 'keys') : keyPath;
-        const dir = await fs.opendir(fname);
-        const files = await dir.read();
+        const files = await fs.readdir(fname);
         const promises = [];
         for (const file of files)
-            promises.push(fs.readFile(file, 'utf8')
-                .then(d => exports.data.keys[file] = d)
+            promises.push(fs.readFile(path.join(fname, file), 'utf8')
+                .then(d => exports.data.keys[file] = JSON.parse(d))
                 .catch(() => null));
         await Promise.all(promises)
     } catch (e) {}
@@ -33,7 +32,7 @@ exports.saveKey = async (keyPath, keyName) => {
     const fpath = (keyPath == null) ? path.join(__dirname, 'keys') : keyPath;
     await mkdirp(fpath);
     const fname = path.join(fpath, keyName);
-    await fs.writeFile(fname, key);
+    await fs.writeFile(fname, JSON.stringify(key));
 };
 
 exports.requestingConfigurations = (intentionStorage, keyPath, data = {}) => {

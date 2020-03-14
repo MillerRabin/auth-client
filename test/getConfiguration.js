@@ -39,6 +39,19 @@ describe('Get Configuration', function() {
         });
     });
 
+    describe('Test load configuration', function () {
+        it('Load', async function () {
+            delete iMain.data.keys['localhost-10011'];
+            await iMain.loadKeys();
+            const key = iMain.data.keys['localhost-10011'];
+            assert.notEqual(key, null);
+            assert.notEqual(key.public, null);
+            assert.notEqual(key.private, null);
+            assert.notEqual(key.certificate, null);
+            assert.notEqual(key.id, null);
+            assert.deepEqual(key.data, { message: 'hello'});
+        });
+    });
 
     describe('Close', function () {
         it ('should unload module', function () {
