@@ -17,7 +17,7 @@ describe('Get Configuration', function() {
 
     describe('Init', function() {
         it('Should load module', function() {
-            iMain.requestingConfigurations(intentionStorage, { message: 'hello'} );
+            iMain.requestingConfigurations(intentionStorage, null, { message: 'hello'} );
             assert.notStrictEqual(iMain.data.iAuth, null);
         });
 
@@ -29,7 +29,7 @@ describe('Get Configuration', function() {
         });
 
         it('Check configuration', function () {
-            const conf = iMain.data.configurations['ws://localhost:10011'];
+            const conf = iMain.data.keys['localhost-10011'];
             assert.notEqual(conf, null);
             assert.notEqual(conf.public, null);
             assert.notEqual(conf.private, null);

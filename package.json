@@ -16,6 +16,7 @@
   "homepage": "https://github.com/MillerRabin/auth-client",
   "dependencies": {
     "intention-storage": "^0.1.13",
+    "mkdirp": "^1.0.3",
     "node-rsa": "^1.0.7"
   },
   "devDependencies": {
