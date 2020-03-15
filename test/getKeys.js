@@ -16,20 +16,26 @@ describe('Get Keys', function() {
     });
 
     describe('Init', function() {
-        it('Should load module', function() {
-            iMain.requestingKeys(intentionStorage, null, { message: 'hello'} );
+        const storedKeys = {};
+
+        it('Should start requesting keys', function() {
+            iMain.startRequestingKeys(intentionStorage);
             assert.notStrictEqual(iMain.data.iAuth, null);
         });
 
-        it('Wait 10 seconds', function (done) {
-            this.timeout(0);
-            setTimeout(function () {
+        it('Wait keys receiving', function (done) {
+            iMain.on.keysRequested = function () {
+                return null;
+            };
+
+            iMain.on.keysReceived = function (origin, keys) {
+                storedKeys[origin] = keys;
                 done();
-            }, 10000);
+            }
         });
 
         it('Check keys', function () {
-            const conf = iMain.data.keys['localhost-10011'];
+            const conf = storedKeys['ws://localhost:10011'];
             assert.notEqual(conf, null);
             assert.notEqual(conf.public, null);
             assert.notEqual(conf.private, null);
@@ -37,21 +43,9 @@ describe('Get Keys', function() {
         });
     });
 
-    describe('Test loaded keys', function () {
-        it('Load', async function () {
-            iMain.deleteKeys('localhost-10011');
-            await iMain.loadKeys();
-            const key = iMain.data.keys['localhost-10011'];
-            assert.notEqual(key, null);
-            assert.notEqual(key.public, null);
-            assert.notEqual(key.private, null);
-            assert.notEqual(key.id, null);
-        });
-    });
-
     describe('Close', function () {
         it ('should unload module', function () {
-            iMain.unload(intentionStorage);
+            iMain.stopRequestingKeys(intentionStorage);
         });
 
         it('close', function () {

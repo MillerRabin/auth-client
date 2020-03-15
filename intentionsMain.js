@@ -4,21 +4,23 @@ const fs = require('fs').promises;
 const keysDir = '.keys';
 
 exports.data = {
-    iAuth: null,
-    keys: {}
+    iAuth: null
+};
+
+exports.on = {
+    keysRequested: null,
+    keysReceived: null
 };
 
 exports.loadKeys = async (keyPath) => {
-    try {
-        const fname = (keyPath == null) ? path.join(__dirname, keysDir) : keyPath;
-        const files = await fs.readdir(fname);
-        const promises = [];
-        for (const file of files)
-            promises.push(fs.readFile(path.join(fname, file), 'utf8')
-                .then(d => exports.data.keys[file] = JSON.parse(d))
-                .catch(() => null));
-        await Promise.all(promises)
-    } catch (e) {}
+    const fname = (keyPath == null) ? path.join(__dirname, keysDir) : keyPath;
+    const files = await fs.readdir(fname);
+    const promises = [];
+    for (const file of files)
+        promises.push(fs.readFile(path.join(fname, file), 'utf8')
+            .then(d => exports.data.keys[file] = JSON.parse(d))
+            .catch(() => null));
+    return await Promise.all(promises)
 };
 
 function getOriginName(origin) {
@@ -27,20 +29,23 @@ function getOriginName(origin) {
     return fname.replace(/:/gi, '-');
 }
 
-exports.deleteKeys = (name) => {
-    delete exports.data.keys[name];
-};
+function throwError(text) {
+    throw new Error(text);
+}
 
-exports.saveKey = async (keyPath, keyName) => {
-    const key = exports.data.keys[keyName];
-    if (key == null) throw Error(`Key ${keyName} does not exists`);
+exports.saveKeys = async (
+    keyPath,
+    origin = throwError('Origin is not defined'),
+    keys = throwError('Keys is not defined')
+) => {
+    const keyName = getOriginName(origin);
     const fpath = (keyPath == null) ? path.join(__dirname, keysDir) : keyPath;
     await fs.mkdir(fpath, { recursive: true });
     const fname = path.join(fpath, keyName);
-    await fs.writeFile(fname, JSON.stringify(key));
+    await fs.writeFile(fname, JSON.stringify(keys));
 };
 
-exports.requestingKeys = (intentionStorage, keyPath) => {
+function requestingKeys(intentionStorage) {
     exports.data.iAuth = intentionStorage.createIntention({
         title: 'Need authenticate keys',
         input: 'AuthKeys',
@@ -48,25 +53,26 @@ exports.requestingKeys = (intentionStorage, keyPath) => {
         enableBroadcast: false,
         onData: async (status, intention, value) => {
             if (status == 'accepting') {
-                const name = getOriginName(intention.origin);
-                if (exports.data.keys[name] != null)
+                if (exports.on.keysRequested == null)
+                    throw new Error('on.keysRequested is undefined');
+                if (exports.on.keysReceived == null)
+                    throw new Error('on.keysReceived is undefined');
+                const keys = await exports.on.keysRequested(intention.origin);
+                if (keys != null)
                     throw new Error('Keys already received');
             }
-            if (status == 'data') {
-                const name = getOriginName(intention.origin);
-                exports.data.keys[name] = value;
-                await exports.saveKey(keyPath, name);
-            }
+            if (status == 'data')
+                if (exports.on.keysReceived != null)
+                    await exports.on.keysReceived(intention.origin, value);
         }
     });
+    return exports.data.iAuth;
+}
+
+exports.startRequestingKeys = (intentionStorage) => {
+    requestingKeys(intentionStorage);
 };
 
-exports.load = async (intentionStorage, keyPath) => {
-    await exports.loadKeys(keyPath);
-    requestingKeys(intentionStorage, keyPath);
-};
-
-exports.unload = function (intentionStorage) {
+exports.stopRequestingKeys = function (intentionStorage) {
     intentionStorage.deleteIntention(exports.data.iAuth);
-    console.log('unloaded raintech auth client');
 };
