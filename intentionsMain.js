@@ -1,6 +1,7 @@
 const path = require('path');
-const mkdirp = require('mkdirp');
 const fs = require('fs').promises;
+
+const keysDir = '.keys';
 
 exports.data = {
     iAuth: null,
@@ -9,7 +10,7 @@ exports.data = {
 
 exports.loadKeys = async (keyPath) => {
     try {
-        const fname = (keyPath == null) ? path.join(__dirname, 'keys') : keyPath;
+        const fname = (keyPath == null) ? path.join(__dirname, keysDir) : keyPath;
         const files = await fs.readdir(fname);
         const promises = [];
         for (const file of files)
@@ -29,8 +30,8 @@ function getOriginName(origin) {
 exports.saveKey = async (keyPath, keyName) => {
     const key = exports.data.keys[keyName];
     if (key == null) throw Error(`Key ${keyName} does not exists`);
-    const fpath = (keyPath == null) ? path.join(__dirname, 'keys') : keyPath;
-    await mkdirp(fpath);
+    const fpath = (keyPath == null) ? path.join(__dirname, keysDir) : keyPath;
+    await fs.mkdir(fpath, { recursive: true });
     const fname = path.join(fpath, keyName);
     await fs.writeFile(fname, JSON.stringify(key));
 };
