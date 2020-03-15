@@ -27,6 +27,10 @@ function getOriginName(origin) {
     return fname.replace(/:/gi, '-');
 }
 
+exports.deleteKeys = (name) => {
+    delete exports.data.keys[name];
+};
+
 exports.saveKey = async (keyPath, keyName) => {
     const key = exports.data.keys[keyName];
     if (key == null) throw Error(`Key ${keyName} does not exists`);
@@ -36,16 +40,19 @@ exports.saveKey = async (keyPath, keyName) => {
     await fs.writeFile(fname, JSON.stringify(key));
 };
 
-exports.requestingConfigurations = (intentionStorage, keyPath, data = {}) => {
+exports.requestingKeys = (intentionStorage, keyPath) => {
     exports.data.iAuth = intentionStorage.createIntention({
-        title: 'Need authenticate device',
-        input: 'AuthConfiguration',
+        title: 'Need authenticate keys',
+        input: 'AuthKeys',
         output: 'AuthData',
         enableBroadcast: false,
         onData: async (status, intention, value) => {
-            if (status == 'accepting')
-                return { data };
-            if (status == 'authConfiguration') {
+            if (status == 'accepting') {
+                const name = getOriginName(intention.origin);
+                if (exports.data.keys[name] != null)
+                    throw new Error('Keys already received');
+            }
+            if (status == 'data') {
                 const name = getOriginName(intention.origin);
                 exports.data.keys[name] = value;
                 await exports.saveKey(keyPath, name);
@@ -56,7 +63,7 @@ exports.requestingConfigurations = (intentionStorage, keyPath, data = {}) => {
 
 exports.load = async (intentionStorage, keyPath) => {
     await exports.loadKeys(keyPath);
-    requestingConfigurations(intentionStorage, keyPath);
+    requestingKeys(intentionStorage, keyPath);
 };
 
 exports.unload = function (intentionStorage) {
